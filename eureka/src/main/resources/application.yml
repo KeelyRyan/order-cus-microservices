@@ -25,3 +25,5 @@ eureka:
     fetch-registry: false
     register-with-eureka: false
 
+  instance:
+    instance-id: order-service:9001

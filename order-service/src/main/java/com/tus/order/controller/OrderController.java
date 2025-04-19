@@ -46,21 +46,6 @@ public class OrderController {
         return orderService.getAllOrders(pageable);
     }
 
-    // Get paged orders by customerId
-//    @GetMapping("/customer/{customerId}/orders")
-//    public ResponseEntity<Page<OrderDto>> getOrdersByCustomerIdPaged(
-//            @PathVariable Long customerId,
-//            @PageableDefault(size = 10) Pageable pageable) {
-//        Page<OrderDto> orders = orderService.getAllCusOrdersByCustomerId(customerId, pageable);
-//        return ResponseEntity.ok(orders);
-//    }
-
-    //  Get orders by customerId (non-paged)
-//    @GetMapping("/customer/{customerId}/all-orders")
-//    public ResponseEntity<List<OrderDto>> getOrdersByCustomerId(@PathVariable Long customerId) {
-//        List<OrderDto> orders = orderService.getOrdersByCustomerId(customerId);
-//        return ResponseEntity.ok(orders);
-//    }
 
     // Get orders within date range
     @GetMapping("/search/by-date")
@@ -83,13 +68,6 @@ public class OrderController {
         List<OrderDto> orders = orderService.getOrdersSortedByDate(sort);
         return ResponseEntity.ok(orders);
     }
-
-    // (Optional passthrough) Fetch customer by mobile
-//    @GetMapping(path = "/customer")
-//    public ResponseEntity<CustomerDto> getCustomer(@RequestParam String mobileNumber) {
-//        CustomerDto customerDto = orderService.getCustomerByMobile(mobileNumber); // Likely via REST/Feign
-//        return ResponseEntity.ok(customerDto);
-//    }
 
     //  Create a new order
     @PostMapping(path = "/orders")

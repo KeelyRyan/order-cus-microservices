@@ -131,7 +131,7 @@ public class OrderService implements IOrderService {
 
     @Override
     public boolean isDeleted(String mobileNumber) {
-        // Optional logic for soft deletes or audit trails
+        
         return false;
     }
 }

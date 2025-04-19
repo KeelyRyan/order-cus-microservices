@@ -20,12 +20,9 @@ public class Order {
     
     @Column(nullable = false)
     private String mobileNumber;
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "customer_id", nullable = false)
-//    private Customer customer;
-//   
+   
 
-    // Getters and Setters
+    // Getters and Setters -> Fix Lombok
 
     public Long getOrderId() {
         return orderId;
@@ -75,13 +72,7 @@ public class Order {
         this.updatedAt = updatedAt;
     
 	}
-//    public Customer getCustomer() {
-//        return customer;
-//    }
-//
-//    public void setCustomer(Customer customer) {
-//        this.customer = customer;
-//    }
+
     public String getMobileNumber() {
         return mobileNumber;
     }
