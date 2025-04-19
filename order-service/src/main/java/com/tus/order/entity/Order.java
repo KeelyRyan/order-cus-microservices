@@ -17,11 +17,13 @@ public class Order {
     private String product;
     private Double price;
     private LocalDateTime updatedAt;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "customer_id", nullable = false)
-    private Customer customer;
-   
+    
+    @Column(nullable = false)
+    private String mobileNumber;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "customer_id", nullable = false)
+//    private Customer customer;
+//   
 
     // Getters and Setters
 
@@ -73,12 +75,18 @@ public class Order {
         this.updatedAt = updatedAt;
     
 	}
-    public Customer getCustomer() {
-        return customer;
+//    public Customer getCustomer() {
+//        return customer;
+//    }
+//
+//    public void setCustomer(Customer customer) {
+//        this.customer = customer;
+//    }
+    public String getMobileNumber() {
+        return mobileNumber;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setMobileNumber(String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
-
 }

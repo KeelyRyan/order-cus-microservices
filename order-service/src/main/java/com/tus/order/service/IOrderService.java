@@ -15,8 +15,9 @@ public interface IOrderService {
     void deleteOrder(Long orderId);
 
     Page<OrderDto> getAllOrders(Pageable pageable);
-    List<OrderDto> getOrdersByCustomerId(Long customerId);
-    Page<OrderDto> getAllCusOrdersByCustomerId(Long customerId, Pageable pageable);
+//    List<OrderDto> getOrdersByCustomerId(Long customerId);
+//    Page<OrderDto> getAllCusOrdersByCustomerId(Long customerId, Pageable pageable);
+    List<OrderDto> getOrdersByMobileNumber(String mobileNumber);
 
     List<OrderDto> getOrdersWithinDateRange(LocalDate startDate, LocalDate endDate);
     List<OrderDto> getOrdersSortedByDate(String sortDirection);

@@ -1,28 +1,27 @@
 package com.tus.order.mapper;
 
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import com.tus.order.controller.OrderController;
+import com.tus.order.dto.CustomerDto;
 import com.tus.order.dto.OrderDto;
-import com.tus.order.entity.Customer;
 import com.tus.order.entity.Order;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 
 public class OrderMapper {
 
-    public static OrderDto toDto(Order order) {
+    public static OrderDto toDto(Order order, CustomerDto customerDto) {
         OrderDto dto = new OrderDto();
-
         dto.setOrderId(order.getOrderId());
         dto.setOrderDate(order.getOrderDate());
         dto.setAmount(order.getAmount());
         dto.setProduct(order.getProduct());
         dto.setPrice(order.getPrice());
         dto.setUpdatedAt(order.getUpdatedAt());
+        dto.setMobileNumber(order.getMobileNumber());
 
-        if (order.getCustomer() != null) {
-            dto.setCustomerId(order.getCustomer().getCustomerId());
-            dto.setName(order.getCustomer().getName());
-            dto.setEmail(order.getCustomer().getEmail());
-            dto.setMobileNumber(order.getCustomer().getMobileNumber());
+        if (customerDto != null) {
+            dto.setCustomerId(customerDto.getCustomerId());
+            dto.setName(customerDto.getName());
+            dto.setEmail(customerDto.getEmail());
         }
 
         addLinks(dto, order.getOrderId());
@@ -37,13 +36,7 @@ public class OrderMapper {
         order.setProduct(dto.getProduct());
         order.setPrice(dto.getPrice());
         order.setUpdatedAt(dto.getUpdatedAt());
-
-        if (dto.getCustomerId() != null) {
-            Customer customer = new Customer();
-            customer.setCustomerId(dto.getCustomerId());
-            order.setCustomer(customer);
-        }
-
+        order.setMobileNumber(dto.getMobileNumber());
         return order;
     }
 

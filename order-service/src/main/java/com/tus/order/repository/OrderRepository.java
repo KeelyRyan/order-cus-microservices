@@ -9,9 +9,11 @@ import java.time.LocalDate;
 import java.util.List;
 
 public interface OrderRepository extends JpaRepository<Order, Long> {
-    List<Order> findByCustomerCustomerId(Long customerId); // for non-paged
-    Page<Order> findByCustomerCustomerId(Long customerId, Pageable pageable); 
+//    List<Order> findByCustomerCustomerId(Long customerId); // for non-paged
+//    Page<Order> findByCustomerCustomerId(Long customerId, Pageable pageable); 
     List<Order> findByOrderDateBetween(LocalDate start, LocalDate end);
     List<Order> findAllByOrderByOrderDateAsc();
     List<Order> findAllByOrderByOrderDateDesc();
+    List<Order> findByMobileNumber(String mobileNumber);
+
 }

@@ -3,11 +3,9 @@ package com.tus.order.service.impl;
 import com.tus.order.client.CustomerClient;
 import com.tus.order.dto.CustomerDto;
 import com.tus.order.dto.OrderDto;
-import com.tus.order.entity.Customer;
 import com.tus.order.entity.Order;
 import com.tus.order.exception.ResourceNotFoundException;
 import com.tus.order.mapper.OrderMapper;
-import com.tus.order.repository.CustomerRepository;
 import com.tus.order.repository.OrderRepository;
 import com.tus.order.service.IOrderService;
 
@@ -21,7 +19,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
 @Service
 @RequiredArgsConstructor
 @Transactional
@@ -29,55 +26,42 @@ public class OrderService implements IOrderService {
 
     private final OrderRepository orderRepository;
     private final CustomerClient customerClient;
-    private final CustomerRepository customerRepository;
-
 
     @Override
     public CustomerDto getCustomerByMobile(String mobile) {
         return customerClient.getCustomerByMobile(mobile);
     }
-    
+
     @Override
     public OrderDto createOrder(OrderDto orderDto) {
-    	CustomerDto customerDto;
-    	try {
-    	    customerDto = customerClient.getCustomerByMobile(orderDto.getMobileNumber());
-    	} catch (Exception e) {
-    	    // Feign throws for 404s – create customer remotely
-    	    CustomerDto newDto = new CustomerDto();
-    	    newDto.setName(orderDto.getName());
-    	    newDto.setEmail(orderDto.getEmail());
-    	    newDto.setMobileNumber(orderDto.getMobileNumber());
+        CustomerDto customerDto;
 
-    	    customerDto = customerClient.createCustomer(newDto);
-    	}
+        try {
+            customerDto = customerClient.getCustomerByMobile(orderDto.getMobileNumber());
+        } catch (Exception e) {
+            // Customer not found remotely — create it
+            CustomerDto newCustomer = new CustomerDto();
+            newCustomer.setName(orderDto.getName());
+            newCustomer.setEmail(orderDto.getEmail());
+            newCustomer.setMobileNumber(orderDto.getMobileNumber());
 
-    	// Create or retrieve local customer
-    	CustomerDto finalCustomerDto = customerDto; // now effectively final
-    	Customer customer = customerRepository.findByMobileNumber(finalCustomerDto.getMobileNumber())
-    	    .orElseGet(() -> {
-    	        Customer newCustomer = new Customer();
-    	        newCustomer.setName(finalCustomerDto.getName());
-    	        newCustomer.setEmail(finalCustomerDto.getEmail());
-    	        newCustomer.setMobileNumber(finalCustomerDto.getMobileNumber());
-    	        return customerRepository.save(newCustomer);
-    	    });
+            customerDto = customerClient.createCustomer(newCustomer);
+        }
 
-
-        // Save the order
         Order order = OrderMapper.toEntity(orderDto);
-        order.setCustomer(customer);
+        order.setMobileNumber(orderDto.getMobileNumber()); // make sure mobile is saved
 
         Order saved = orderRepository.save(order);
-        return OrderMapper.toDto(saved);
+        return OrderMapper.toDto(saved, customerDto); // pass customerDto into mapper
     }
-
 
     @Override
     public OrderDto getOrder(Long orderId) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "orderId", orderId.toString()));
-        return OrderMapper.toDto(order);
+
+        CustomerDto customerDto = customerClient.getCustomerByMobile(order.getMobileNumber());
+        return OrderMapper.toDto(order, customerDto);
     }
 
     @Override
@@ -104,47 +88,50 @@ public class OrderService implements IOrderService {
     @Override
     public Page<OrderDto> getAllOrders(Pageable pageable) {
         return orderRepository.findAll(pageable)
-                .map(OrderMapper::toDto);
+                .map(order -> {
+                    CustomerDto customerDto = customerClient.getCustomerByMobile(order.getMobileNumber());
+                    return OrderMapper.toDto(order, customerDto);
+                });
     }
-
     @Override
-    public List<OrderDto> getOrdersByCustomerId(Long customerId) {
-        return orderRepository.findByCustomerCustomerId(customerId)
+    public List<OrderDto> getOrdersByMobileNumber(String mobileNumber) {
+        return orderRepository.findByMobileNumber(mobileNumber)
                 .stream()
-                .map(OrderMapper::toDto)
+                .map(order -> {
+                    CustomerDto customerDto = customerClient.getCustomerByMobile(order.getMobileNumber());
+                    return OrderMapper.toDto(order, customerDto);
+                })
                 .collect(Collectors.toList());
     }
 
-    @Override
-    public Page<OrderDto> getAllCusOrdersByCustomerId(Long customerId, Pageable pageable) {
-        return orderRepository.findByCustomerCustomerId(customerId, pageable)
-                .map(OrderMapper::toDto);
-    }
 
     @Override
     public List<OrderDto> getOrdersWithinDateRange(LocalDate startDate, LocalDate endDate) {
-        return orderRepository.findByOrderDateBetween(startDate, endDate)
-                .stream()
-                .map(OrderMapper::toDto)
+        return orderRepository.findByOrderDateBetween(startDate, endDate).stream()
+                .map(order -> {
+                    CustomerDto customerDto = customerClient.getCustomerByMobile(order.getMobileNumber());
+                    return OrderMapper.toDto(order, customerDto);
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
     public List<OrderDto> getOrdersSortedByDate(String sort) {
-        if ("desc".equalsIgnoreCase(sort)) {
-            return orderRepository.findAllByOrderByOrderDateDesc()
-                    .stream().map(OrderMapper::toDto).collect(Collectors.toList());
-        } else {
-            return orderRepository.findAllByOrderByOrderDateAsc()
-                    .stream().map(OrderMapper::toDto).collect(Collectors.toList());
-        }
+        List<Order> orders = "desc".equalsIgnoreCase(sort)
+                ? orderRepository.findAllByOrderByOrderDateDesc()
+                : orderRepository.findAllByOrderByOrderDateAsc();
+
+        return orders.stream()
+                .map(order -> {
+                    CustomerDto customerDto = customerClient.getCustomerByMobile(order.getMobileNumber());
+                    return OrderMapper.toDto(order, customerDto);
+                })
+                .collect(Collectors.toList());
     }
 
-	@Override
-	public boolean isDeleted(String mobileNumber) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-    // Optional fallback methods can go here later
+    @Override
+    public boolean isDeleted(String mobileNumber) {
+        // Optional logic for soft deletes or audit trails
+        return false;
+    }
 }

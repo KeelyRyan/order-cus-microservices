@@ -46,13 +46,13 @@ public class OrderController {
     }
 
     // Get paged orders by customerId
-    @GetMapping("/customer/{customerId}/orders")
-    public ResponseEntity<Page<OrderDto>> getOrdersByCustomerIdPaged(
-            @PathVariable Long customerId,
-            @PageableDefault(size = 10) Pageable pageable) {
-        Page<OrderDto> orders = orderService.getAllCusOrdersByCustomerId(customerId, pageable);
-        return ResponseEntity.ok(orders);
-    }
+//    @GetMapping("/customer/{customerId}/orders")
+//    public ResponseEntity<Page<OrderDto>> getOrdersByCustomerIdPaged(
+//            @PathVariable Long customerId,
+//            @PageableDefault(size = 10) Pageable pageable) {
+//        Page<OrderDto> orders = orderService.getAllCusOrdersByCustomerId(customerId, pageable);
+//        return ResponseEntity.ok(orders);
+//    }
 
     //  Get orders by customerId (non-paged)
 //    @GetMapping("/customer/{customerId}/all-orders")
