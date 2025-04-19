@@ -42,7 +42,7 @@ public class OrderMapper {
 
     private static void addLinks(OrderDto dto, Long orderId) {
         dto.add(WebMvcLinkBuilder.linkTo(
-                WebMvcLinkBuilder.methodOn(OrderController.class).getOrder(orderId)).withSelfRel());
+                WebMvcLinkBuilder.methodOn(OrderController.class).getOrder(null, orderId)).withSelfRel());
 
         dto.add(WebMvcLinkBuilder.linkTo(
                 WebMvcLinkBuilder.methodOn(OrderController.class).getAllOrders(null)).withRel("all-orders"));

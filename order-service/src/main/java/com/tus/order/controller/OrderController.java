@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,7 +35,7 @@ public class OrderController {
 
     // Get order by ID
     @GetMapping(path = "/orders/{orderId}")
-    public ResponseEntity<OrderDto> getOrder(@PathVariable Long orderId) {
+    public ResponseEntity<OrderDto> getOrder(@RequestHeader("orders-correlation-id") String correlationId, @PathVariable Long orderId) {
         OrderDto orderDto = orderService.getOrder(orderId);
         return ResponseEntity.ok(orderDto);
     }

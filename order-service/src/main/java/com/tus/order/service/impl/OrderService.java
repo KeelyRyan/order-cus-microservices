@@ -39,7 +39,7 @@ public class OrderService implements IOrderService {
         try {
             customerDto = customerClient.getCustomerByMobile(orderDto.getMobileNumber());
         } catch (Exception e) {
-            // Customer not found remotely — create it
+            // Customer not found — create it
             CustomerDto newCustomer = new CustomerDto();
             newCustomer.setName(orderDto.getName());
             newCustomer.setEmail(orderDto.getEmail());

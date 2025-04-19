@@ -1,5 +1,6 @@
 server:
   port: 8761
+
 spring:
   application:
     name: "eurekaserver"
@@ -19,3 +20,8 @@ management:
       health:
         probes:
           enabled: true
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+

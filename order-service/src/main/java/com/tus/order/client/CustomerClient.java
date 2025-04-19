@@ -14,5 +14,5 @@ public interface CustomerClient {
     CustomerDto getCustomerByMobile(@RequestParam("mobile") String mobile);
 
     @PostMapping("/api/customer")
-    CustomerDto createCustomer(@RequestBody CustomerDto customerDto); // ✅ make sure this exists
-}
+    CustomerDto createCustomer(@RequestBody CustomerDto customerDto); 
+    }

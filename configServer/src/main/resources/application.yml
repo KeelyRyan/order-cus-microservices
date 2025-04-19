@@ -11,4 +11,3 @@ spring:
           search-locations: file:./config-repo
   profiles:
     active: native
-
