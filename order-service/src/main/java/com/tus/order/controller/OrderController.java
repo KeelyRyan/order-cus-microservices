@@ -2,6 +2,7 @@ package com.tus.order.controller;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -32,6 +33,8 @@ import com.tus.order.service.IOrderService;
 public class OrderController {
 
     private final IOrderService orderService;
+    @Value("${server.port}")
+    private String port;
 
     // Get order by ID
     @GetMapping(path = "/orders/{orderId}")
@@ -40,9 +43,10 @@ public class OrderController {
         return ResponseEntity.ok(orderDto);
     }
 
-    // Get all orders (paged)
+ // Get all orders (paged)
     @GetMapping(path = "/orders")
     public Page<OrderDto> getAllOrders(@PageableDefault(size = 10, sort = "orderDate") Pageable pageable) {
+        System.out.println("Handled by instance on port: " + port); // or use a logger
         return orderService.getAllOrders(pageable);
     }
 
